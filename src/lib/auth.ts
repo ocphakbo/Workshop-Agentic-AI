@@ -1,0 +1,4 @@
+import type { Env } from '../env'; import { errorJson } from './http';
+export function requireAdminToken(request: Request, env: Env): Response | undefined { if (!env.ADMIN_TOKEN) return errorJson('ยังไม่ได้ตั้งค่า ADMIN_TOKEN', 503); if (request.headers.get('X-Admin-Token') !== env.ADMIN_TOKEN) return errorJson('ไม่มีสิทธิ์', 401); }
+export function requireBearerToken(request: Request, env: Env): Response | undefined { if (!env.MCP_ACCESS_TOKEN) return errorJson('ยังไม่ได้ตั้งค่า MCP_ACCESS_TOKEN', 503); if (request.headers.get('Authorization') !== `Bearer ${env.MCP_ACCESS_TOKEN}`) return errorJson('ต้องแนบ MCP bearer token', 401); }
+export function requireSiteSession(request: Request, env: Env): Response | undefined { return requireAdminToken(request, env); }
