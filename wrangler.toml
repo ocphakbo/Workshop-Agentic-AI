@@ -1,19 +1,22 @@
-name = "workshop-agentic-ai"
+name = 'workshop-agentic-ai'
 main = "src/index.ts"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
 
-# หน้าเว็บ static (Chat / Key settings / MCP settings) — เสิร์ฟตรงจากโฟลเดอร์นี้
-# path ที่ไม่ตรงกับไฟล์ในนี้ (เช่น /api/*, /mcp/*, /telegram/*) จะตกไปที่ src/index.ts ให้อัตโนมัติ
+# หน้าเว็บ static (Chat / Key settings / MCP settings) — ไฟล์จริงอยู่ในโฟลเดอร์นี้
+# run_worker_first = true: บังคับให้ทุก request (รวม path ที่ตรงไฟล์ static เป๊ะ ๆ) วิ่งเข้า src/index.ts ก่อนเสมอ
+# เพื่อให้ router.ts เช็ค session cookie (รหัสผ่าน class) ได้ก่อนค่อยเรียก env.ASSETS.fetch() เอง — ถ้าไม่ใส่บรรทัดนี้
+# Cloudflare จะเสิร์ฟไฟล์ static ให้ตรง ๆ โดยไม่ผ่านโค้ดเราเลย ทำให้ gate ด้วยรหัสผ่านไม่ได้
 [assets]
 directory = "./public"
 binding = "ASSETS"
+run_worker_first = true
 
 # ต้องสร้างจริงก่อนใช้งาน: `npx wrangler kv namespace create APP_KV` แล้วเอา id ที่ได้มาแทนค่าด้านล่าง
 # ดูขั้นตอนเต็มใน SETUP.md
 [[kv_namespaces]]
 binding = "APP_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "1db623321cd04e498f649975a0a4ff43"
 
 # Secret จริงทั้งหมดต่อไปนี้ ห้ามใส่ในไฟล์นี้เด็ดขาด — ตั้งผ่าน `npx wrangler secret put <ชื่อ>` เท่านั้น
 # (เข้ารหัสเก็บฝั่ง Cloudflare) รายชื่อที่ต้องตั้ง ดู SETUP.md:
@@ -22,7 +25,7 @@ id = "REPLACE_WITH_KV_NAMESPACE_ID"
 #   TELEGRAM_BOT_TOKEN, TELEGRAM_WEBHOOK_SECRET
 
 [vars]
-# ค่า config ทั่วไปที่ไม่ใช่ความลับ ใส่ตรงนี้ได้ แก้ default model ได้จากตรงนี้จุดเดียว
+# ค่า config ทั่วไปที่ไม่ใช่ความลับ ใส่ตรงนี้ได้ — เปลี่ยนได้อีกทีจากหน้า "ตั้งค่า Key" โดยไม่ต้อง deploy ใหม่
 GEMINI_MODEL = "gemini-flash-latest"
 OPENAI_MODEL = "gpt-4o-mini"
 DEFAULT_CHAT_PROVIDER = "gemini"
